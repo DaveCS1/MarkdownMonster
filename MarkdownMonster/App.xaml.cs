@@ -37,6 +37,7 @@ using System.Windows.Media;
 using MahApps.Metro;
 using MahApps.Metro.Controls;
 using MarkdownMonster.AddIns;
+using MarkdownMonster.Utilities;
 using Westwind.Utilities;
 using MessageBox = System.Windows.MessageBox;
 
@@ -90,10 +91,10 @@ namespace MarkdownMonster
             SplashScreen splashScreen = null;
             if (!mmApp.Configuration.DisableSplashScreen)
             {
-                splashScreen = new SplashScreen("assets/markdownmonstersplash.png");
+                splashScreen = new SplashScreen("Assets/MarkdownMonsterSplash.png");
                 splashScreen.Show(true);
             }
-
+        
 
             // Singleton launch marshalls subsequent launches to the singleton instance
             // via named pipes communication

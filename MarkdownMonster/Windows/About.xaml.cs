@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Reflection;
 using MahApps.Metro.Controls;
+using MarkdownMonster.Utilities;
 using Westwind.Utilities;
 
 namespace MarkdownMonster.Windows

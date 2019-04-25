@@ -11,7 +11,7 @@ using MahApps.Metro.Controls;
 using MahApps.Metro.Controls.Dialogs;
 using MarkdownMonster.Utilities;
 using Microsoft.Win32;
-using Microsoft.WindowsAPICodePack.Dialogs;
+
 using Westwind.Utilities;
 
 namespace MarkdownMonster.Windows
@@ -149,7 +149,7 @@ namespace MarkdownMonster.Windows
 
         private void OpenFromUrl_Activated(object sender, EventArgs e)
         {
-            string clip = Clipboard.GetText(TextDataFormat.Text);
+            string clip = System.Windows.Clipboard.GetText(System.Windows.TextDataFormat.Text);
             if (string.IsNullOrEmpty(GitUrl) &&
                 clip.StartsWith("http://") || clip.StartsWith("https://"))
                 GitUrl = clip;
@@ -157,7 +157,7 @@ namespace MarkdownMonster.Windows
 
         private void OpenFromUrl_Loaded(object sender, RoutedEventArgs e)
         {
-            string clip = Clipboard.GetText(TextDataFormat.Text);
+            string clip = System.Windows.Clipboard.GetText(System.Windows.TextDataFormat.Text);
             if (string.IsNullOrEmpty(GitUrl) &&
                 clip.StartsWith("http://") || clip.StartsWith("https://"))
             {
@@ -177,22 +177,26 @@ namespace MarkdownMonster.Windows
 
         private void BrowseForFolder_Click(object sender, RoutedEventArgs e)
         {
-            var dlg = new CommonOpenFileDialog();
 
-            dlg.Title = "Select or create a folder to clone Repository to:";
-            dlg.IsFolderPicker = true;
-            dlg.InitialDirectory = mmApp.Configuration.LastFolder;
-            dlg.RestoreDirectory = true;
-            dlg.ShowHiddenItems = true;
-            dlg.ShowPlacesList = true;
-            dlg.EnsurePathExists = true;
+            var oldPath = Environment.CurrentDirectory;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
+            dlg.Description = "Select folderOrFilePath to open in the Folder Browser";
 
+            dlg.SelectedPath = mmApp.Configuration.LastFolder;
+            dlg.ShowNewFolderButton = true;
+            dlg.UseDescriptionForTitle = true;
             var result = dlg.ShowDialog();
 
-            if (result != CommonFileDialogResult.Ok)
+            Directory.SetCurrentDirectory(oldPath);
+
+
+            if (result == System.Windows.Forms.DialogResult.OK || !Directory.Exists(dlg.SelectedPath))
                 return;
 
-            LocalPath = dlg.FileName;
+            if (result != System.Windows.Forms.DialogResult.OK)
+                return;
+
+            LocalPath = dlg.SelectedPath;
         }
 
 

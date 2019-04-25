@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using MarkdownMonster.Utilities;
 using MarkdownMonster.Windows;
 using Microsoft.ApplicationInsights;
 using Microsoft.ApplicationInsights.DataContracts;

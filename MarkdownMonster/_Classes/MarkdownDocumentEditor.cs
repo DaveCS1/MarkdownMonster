@@ -225,18 +225,25 @@ namespace MarkdownMonster
 
 
         private void OnDocumentCompleted(object sender, NavigationEventArgs e)
-        {
+        {            
             if (AceEditor == null)
             {
                 // Get the JavaScript Ace Editor Instance
                 dynamic doc = WebBrowser.Document;
-                var window = doc.parentWindow;
+
+                // doesn't work
+                //dynamic window = doc.parentWindow;
+
+                // this does
+                object window = ReflectionUtils.GetPropertyCom(doc, "parentWindow");
 
                 try
                 {
 
                     var jsonStyle = GetJsonStyleInfo();
-                    AceEditor = window.initializeinterop(this,jsonStyle);
+                    AceEditor = ReflectionUtils.CallMethodCom(window, "initializeinterop", this, jsonStyle);
+
+                    //AceEditor = window.initializeinterop(this,jsonStyle);
                 }
                 catch (Exception ex)
                 {
@@ -244,16 +251,16 @@ namespace MarkdownMonster
                     //throw;
                 }
 
-                if (EditorSyntax != "markdown")
-                    AceEditor?.setlanguage(EditorSyntax);
+                //if (EditorSyntax != "markdown")
+                //    AceEditor?.setlanguage(EditorSyntax);
 
 
-                if (EditorSyntax == "markdown" || EditorSyntax == "text")
-                    AceEditor?.enablespellchecking(!mmApp.Configuration.Editor.EnableSpellcheck,
-                        mmApp.Configuration.Editor.Dictionary);
-                else
-                    // always disable for non-markdown text
-                    AceEditor?.enablespellchecking(true, mmApp.Configuration.Editor.Dictionary);
+                //if (EditorSyntax == "markdown" || EditorSyntax == "text")
+                //    AceEditor?.enablespellchecking(!mmApp.Configuration.Editor.EnableSpellcheck,
+                //        mmApp.Configuration.Editor.Dictionary);
+                //else
+                //    // always disable for non-markdown text
+                //    AceEditor?.enablespellchecking(true, mmApp.Configuration.Editor.Dictionary);
 
 
                 if (!NoInitialFocus)
@@ -331,7 +338,9 @@ namespace MarkdownMonster
                 if (position == null)
                     position = -2; // keep position
 
-                AceEditor.setvalue(markdown ?? string.Empty, position, keepUndoBuffer);
+                //AceEditor.setvalue(markdown ?? string.Empty, position, keepUndoBuffer);
+                ReflectionUtils.CallMethodCom(AceEditor, "setvalue", markdown ?? string.Empty, position,
+                    keepUndoBuffer);
             }
 
             if (updateDirtyFlag)
@@ -347,7 +356,7 @@ namespace MarkdownMonster
             if (AceEditor == null)
                 return "";
 
-            MarkdownDocument.CurrentText = AceEditor.getvalue(false);
+            MarkdownDocument.CurrentText = ReflectionUtils.CallMethodCom(AceEditor,"getvalue",false) as string;
             return MarkdownDocument.CurrentText;
         }
 
@@ -1918,12 +1927,12 @@ namespace MarkdownMonster
                             {
                                 using (var bmp = new Bitmap(bitMap))
                                 {
-                                    ImageUtils.SaveJpeg(bmp, imagePath, mmApp.Configuration.JpegImageCompressionLevel);
+                                    MarkdownMonster.Utilities.ImageUtils.SaveJpeg(bmp, imagePath, mmApp.Configuration.JpegImageCompressionLevel);
                                 }
                             }
                             else
                             {
-                                var format = ImageUtils.GetImageFormatFromFilename(imagePath);
+                                var format = MarkdownMonster.Utilities.ImageUtils.GetImageFormatFromFilename(imagePath);
                                 bitMap.Save(imagePath, format);
                                 bitMap.Dispose();
 

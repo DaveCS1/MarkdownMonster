@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -15,7 +16,6 @@ using FontAwesome.WPF;
 using MarkdownMonster.Annotations;
 using MarkdownMonster.Controls;
 using MarkdownMonster.Utilities;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Westwind.Utilities;
 using Brushes = System.Windows.Media.Brushes;
 
@@ -472,22 +472,23 @@ namespace MarkdownMonster.Windows
                 else
                     folder = KnownFolders.GetPath(KnownFolder.Libraries);
             }
-           
-            var dlg = new CommonOpenFileDialog();
-            dlg.Title = "Select folderOrFilePath to open in the Folder Browser";
-            dlg.IsFolderPicker = true;
-            dlg.InitialDirectory = folder;
-            dlg.RestoreDirectory = true;
-            dlg.ShowHiddenItems = true;
-            dlg.ShowPlacesList = true;
-            dlg.EnsurePathExists = true;
 
+            var oldPath = Environment.CurrentDirectory;
+            var dlg = new System.Windows.Forms.FolderBrowserDialog();
+            dlg.Description = "Select folderOrFilePath to open in the Folder Browser";
+            
+            dlg.SelectedPath = folder;
+            dlg.ShowNewFolderButton = true;
+            dlg.UseDescriptionForTitle = true;
             var result = dlg.ShowDialog();
 
-            if (result != CommonFileDialogResult.Ok)
+            Directory.SetCurrentDirectory(oldPath);
+
+
+            if (result != System.Windows.Forms.DialogResult.OK || !Directory.Exists(dlg.SelectedPath))
                 return;
 
-            FolderPath = dlg.FileName;
+            FolderPath = dlg.SelectedPath;
 
             TreeFolderBrowser.Focus();
         }
